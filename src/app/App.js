@@ -10,6 +10,9 @@ import LoadingIndicator from "../common/LoadingIndicator";
 import { getCurrentUser } from "../util/APIUtils";
 import { ACCESS_TOKEN } from "../constants";
 import ChatRoom from '../component/ChatRoom'
+import ChatDetails from '../component/ChatDetails'
+
+import ChatListRenderer from '../component/ChatListRenderer'
 import PrivateRoute from "../common/PrivateRoute";
 import Alert from "react-s-alert";
 import "react-s-alert/dist/s-alert-default.css";
@@ -75,7 +78,9 @@ class App extends Component {
         <div className="app-body">
           <Switch>
             <Route exact path="/" component={Home}></Route>
-            <Route exact path="/chat" component={ChatRoom}></Route>
+            <Route exact path="/chat" component={ChatListRenderer}></Route>
+            <Route path="/chat/:chatId" component={ChatDetails} />
+
             <PrivateRoute
               path="/profile"
               authenticated={this.state.authenticated}

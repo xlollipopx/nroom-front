@@ -9,7 +9,7 @@ class AppHeader extends Component {
         <div className="container">
           <div className="app-branding">
             <Link to="/" className="app-title">
-              React Login
+              Home
             </Link>
           </div>
           <div className="app-options">

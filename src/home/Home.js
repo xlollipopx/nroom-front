@@ -1,7 +1,15 @@
 import React, { Component } from "react";
+import { withRouter } from "react-router-dom";
+
 import "./Home.css";
 
 class Home extends Component {
+
+
+   navigateToChat = () => {
+    this.props.history.push("/chat");
+  }
+
   renderCircles() {
     return (
       <div className="container">
@@ -20,7 +28,7 @@ class Home extends Component {
             <div className="graf-circle"></div>
           </div>
         </div>
-        <h1 className="home-title">React Login</h1>
+        <button className="home-title" onClick={this.navigateToChat}>Chat Now!</button>
       </div>
     );
   }

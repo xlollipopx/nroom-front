@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { over } from 'stompjs';
 import SockJS from 'sockjs-client';
 import './ChatRoom.css';
+import {apiBaseUrl} from '../config/dev'
 
 
 var stompClient = null;
@@ -20,7 +21,7 @@ const ChatRoom = () => {
     }, [userData]);
 
     const connect = () => {
-        let Sock = new SockJS('http://localhost:8084/ws');
+        let Sock = new SockJS(apiBaseUrl + '/messaging-service/ws', null, {withCredentials: true});
         stompClient = over(Sock);
         stompClient.connect({}, onConnected, onError);
     }
@@ -28,7 +29,7 @@ const ChatRoom = () => {
     const onConnected = () => {
         setUserData({ ...userData, "connected": true });
         stompClient.subscribe('/chatroom/public', onMessageReceived);
-        stompClient.subscribe('/user/' + userData.username + '/private', onPrivateMessage);
+        //stompClient.subscribe('/user/' + userData.username + '/private', onPrivateMessage);
         userJoin();
     }
 
@@ -37,7 +38,7 @@ const ChatRoom = () => {
             senderName: userData.username,
             status: "JOIN"
         };
-        stompClient.send("/exchange-service/message", {}, JSON.stringify(chatMessage));
+        stompClient.send("/messaging-service/message", {}, JSON.stringify(chatMessage));
     }
 
     const onMessageReceived = (payload) => {
@@ -56,19 +57,19 @@ const ChatRoom = () => {
         }
     }
 
-    const onPrivateMessage = (payload) => {
-        console.log(payload);
-        var payloadData = JSON.parse(payload.body);
-        if (privateChats.get(payloadData.senderName)) {
-            privateChats.get(payloadData.senderName).push(payloadData);
-            setPrivateChats(new Map(privateChats));
-        } else {
-            let list = [];
-            list.push(payloadData);
-            privateChats.set(payloadData.senderName, list);
-            setPrivateChats(new Map(privateChats));
-        }
-    }
+    // const onPrivateMessage = (payload) => {
+    //     console.log(payload);
+    //     var payloadData = JSON.parse(payload.body);
+    //     if (privateChats.get(payloadData.senderName)) {
+    //         privateChats.get(payloadData.senderName).push(payloadData);
+    //         setPrivateChats(new Map(privateChats));
+    //     } else {
+    //         let list = [];
+    //         list.push(payloadData);
+    //         privateChats.set(payloadData.senderName, list);
+    //         setPrivateChats(new Map(privateChats));
+    //     }
+    // }
 
     const onError = (err) => {
         console.log(err);
@@ -87,7 +88,7 @@ const ChatRoom = () => {
                 status: "MESSAGE"
             };
             console.log(chatMessage);
-            stompClient.send("/exchange-service/message", {}, JSON.stringify(chatMessage));
+            stompClient.send("/messaging-service/message", {}, JSON.stringify(chatMessage));
             setUserData({ ...userData, "message": "" });
         }
     }
@@ -105,7 +106,7 @@ const ChatRoom = () => {
                 privateChats.get(tab).push(chatMessage);
                 setPrivateChats(new Map(privateChats));
             }
-            stompClient.send("/app/private-message", {}, JSON.stringify(chatMessage));
+            stompClient.send("/messaging-service/private-message", {}, JSON.stringify(chatMessage));
             setUserData({ ...userData, "message": "" });
         }
     }

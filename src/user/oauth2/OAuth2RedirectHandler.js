@@ -2,6 +2,8 @@ import React, { Component } from 'react';
 import { Redirect } from 'react-router-dom';
 import Cookies from 'universal-cookie';
 import axios from 'axios';
+import {apiBaseUrl} from '../../config/dev'
+
 
 class OAuth2RedirectHandler extends Component {
 
@@ -25,7 +27,7 @@ class OAuth2RedirectHandler extends Component {
         const cookies = new Cookies();
         const authId = cookies.get('Auth-Identification', { path: '/' });
         if (!cookies.get("isLogedIn")) {
-            axios.get("http://localhost:8080/login/oauth2/code/google?" + this.getParamsUrl(decodeURIComponent(this.props.location.search)),
+            axios.get(apiBaseUrl + "/login/oauth2/code/google?" + this.getParamsUrl(decodeURIComponent(this.props.location.search)),
                 {
                     headers: {
                         'Auth-Identification': authId
